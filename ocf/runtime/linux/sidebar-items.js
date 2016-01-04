@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["LinuxMountPropagation",""],["LinuxNamespaceKind",""]],"struct":[["LinuxIdMap",""],["LinuxNamespace",""],["LinuxRuntime",""]]});
+initSidebarItems({"enum":[["MountPropagation",""],["NamespaceKind",""]],"struct":[["Device",""],["IdMap",""],["Namespace",""],["Runtime",""]]});

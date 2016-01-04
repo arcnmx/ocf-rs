@@ -1,1 +1,1 @@
-initSidebarItems({"enum":[["LinuxCapability",""]],"struct":[["LinuxUser",""]]});
+initSidebarItems({"enum":[["Capability",""]],"struct":[["User",""]]});
