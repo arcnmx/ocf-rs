@@ -1,4 +1,3 @@
-#[macro_export]
 macro_rules! string_enum {
     ($ty:ident: $($key:ident => $value:expr,)*) => {
         #[allow(non_camel_case_types)]
