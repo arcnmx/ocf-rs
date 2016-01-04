@@ -1,12 +1,12 @@
 #[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct LinuxUser {
+pub struct User {
     pub uid: u32,
     pub gid: u32,
     #[serde(default, skip_serializing_if_empty, rename = "additionalGids")]
     pub additional_gids: Vec<u32>,
 }
 
-string_enum! { LinuxCapability:
+string_enum! { Capability:
     AuditControl => "CAP_AUDIT_CONTROL",
     AuditRead => "CAP_AUDIT_READ",
     AuditWrite => "CAP_AUDIT_WRITE",
@@ -45,4 +45,18 @@ string_enum! { LinuxCapability:
     SysTtyConfig => "CAP_SYS_TTY_CONFIG",
     Syslog => "CAP_SYSLOG",
     WakeAlarm => "CAP_WAKE_ALARM",
+}
+
+impl User {
+    pub fn uid(&self) -> u32 {
+        self.uid
+    }
+
+    pub fn gid(&self) -> u32 {
+        self.gid
+    }
+
+    pub fn additional_gids(&self) -> &[u32] {
+        &self.additional_gids
+    }
 }

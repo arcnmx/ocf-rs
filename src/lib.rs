@@ -13,10 +13,13 @@ mod serialize;
 mod fs;
 
 pub use spec::{Spec, Root, Process, MountPoint, Env, Platform, Arch};
-pub use spec::linux::{LinuxUser, LinuxCapability};
 pub use runtime::{RuntimeSpec, Command, Mount, Hooks};
-pub use runtime::linux::{LinuxIdMap, LinuxRuntime, LinuxNamespace, LinuxNamespaceKind, LinuxMountPropagation};
 pub use fs::load;
+
+pub mod linux {
+    pub use super::spec::linux::{User, Capability};
+    pub use super::runtime::linux::{IdMap, Runtime, Namespace, NamespaceKind, MountPropagation, Device};
+}
 
 pub fn version() -> Version {
     Version {

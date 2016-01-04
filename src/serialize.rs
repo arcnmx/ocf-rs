@@ -4,7 +4,7 @@ use serde_json;
 use serde::{ser, de};
 use semver::Version;
 use spec::{Env, Process, Spec, Arch, Platform, Root, MountPoint};
-use spec::linux::{LinuxUser, LinuxCapability};
+use spec::linux;
 use runtime::RuntimeSpec;
 use version_req;
 
@@ -51,7 +51,7 @@ impl de::Deserialize for Process {
             #[serde(default)]
             terminal: Option<bool>,
             #[serde(default)]
-            user: Option<LinuxUser>,
+            user: Option<linux::User>,
             args: Vec<String>,
             #[serde(default)]
             env: Vec<Env>,
@@ -82,7 +82,7 @@ impl ser::Serialize for Process {
             #[serde(skip_serializing_if_none)]
             terminal: Option<bool>,
             #[serde(skip_serializing_if_none)]
-            user: &'a Option<LinuxUser>,
+            user: &'a Option<linux::User>,
             args: Vec<&'a str>,
             #[serde(skip_serializing_if_empty)]
             env: &'a Vec<Env>,
@@ -117,7 +117,7 @@ impl de::Deserialize for Spec {
         #[derive(Deserialize)]
         struct LinuxDeserialize {
             #[serde(default)]
-            capabilities: Vec<LinuxCapability>,
+            capabilities: Vec<linux::Capability>,
         }
 
         #[derive(Deserialize)]
@@ -171,7 +171,7 @@ impl ser::Serialize for Spec {
         #[derive(Serialize)]
         struct LinuxSerialize<'a> {
             #[serde(skip_serializing_if_empty)]
-            capabilities: &'a Vec<LinuxCapability>,
+            capabilities: &'a Vec<linux::Capability>,
         }
 
         #[derive(Serialize)]

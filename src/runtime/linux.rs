@@ -2,7 +2,7 @@ use std::collections::BTreeMap;
 use serde_value::Value;
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct LinuxIdMap {
+pub struct IdMap {
     #[serde(rename = "hostID")]
     pub host_id: u32,
     #[serde(rename = "containerID")]
@@ -11,17 +11,17 @@ pub struct LinuxIdMap {
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct LinuxRuntime {
+pub struct Runtime {
     #[serde(default, skip_serializing_if_empty)]
-    pub namespaces: Vec<LinuxNamespace>,
+    pub namespaces: Vec<Namespace>,
     #[serde(rename = "uidMappings", default, skip_serializing_if_empty)]
-    pub uid_mappings: Vec<LinuxIdMap>,
+    pub uid_mappings: Vec<IdMap>,
     #[serde(rename = "gidMappings", default, skip_serializing_if_empty)]
-    pub gid_mappings: Vec<LinuxIdMap>,
+    pub gid_mappings: Vec<IdMap>,
     #[serde(rename = "rootfsPropagation", default)]
-    pub rootfs_propagation: Option<LinuxMountPropagation>,
+    pub rootfs_propagation: Option<MountPropagation>,
     #[serde(default, skip_serializing_if_empty)]
-    pub devices: Vec<LinuxDevice>,
+    pub devices: Vec<Device>,
 
     // Unsupported stubs
     #[serde(default, skip_serializing)]
@@ -41,15 +41,15 @@ pub struct LinuxRuntime {
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct LinuxNamespace {
+pub struct Namespace {
     #[serde(rename = "type")]
-    pub kind: LinuxNamespaceKind,
+    pub kind: NamespaceKind,
     #[serde(default, skip_serializing_if_none)]
     pub path: Option<String>,
 }
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
-pub struct LinuxDevice {
+pub struct Device {
     pub path: String,
     #[serde(rename = "type")]
     pub kind: u8,
@@ -63,7 +63,7 @@ pub struct LinuxDevice {
     pub gid: u32,
 }
 
-string_enum! { LinuxNamespaceKind:
+string_enum! { NamespaceKind:
     PID => "pid",
     Network => "network",
     Mount => "mount",
@@ -72,14 +72,94 @@ string_enum! { LinuxNamespaceKind:
     User => "user",
 }
 
-string_enum! { LinuxMountPropagation:
+string_enum! { MountPropagation:
     Slave => "slave",
     Private => "private",
     Shared => "shared",
 }
 
-impl Default for LinuxMountPropagation {
+impl Default for MountPropagation {
     fn default() -> Self {
-        LinuxMountPropagation::Private
+        MountPropagation::Private
+    }
+}
+
+impl IdMap {
+    pub fn host_id(&self) -> u32 {
+        self.host_id
+    }
+
+    pub fn container_id(&self) -> u32 {
+        self.container_id
+    }
+
+    pub fn size(&self) -> u32 {
+        self.size
+    }
+}
+
+impl Runtime {
+    pub fn namespaces(&self) -> &[Namespace] {
+        &self.namespaces
+    }
+
+    pub fn uid_mappings(&self) -> &[IdMap] {
+        &self.uid_mappings
+    }
+
+    pub fn gid_mappings(&self) -> &[IdMap] {
+        &self.gid_mappings
+    }
+
+    pub fn rootfs_propagation(&self) -> MountPropagation {
+        self.rootfs_propagation.unwrap_or_default()
+    }
+
+    pub fn devices(&self) -> &[Device] {
+        &self.devices
+    }
+}
+
+impl Namespace {
+    pub fn kind(&self) -> NamespaceKind {
+        self.kind
+    }
+
+    pub fn path(&self) -> Option<&str> {
+        self.path.as_ref().map(AsRef::as_ref)
+    }
+}
+
+impl Device {
+    pub fn path(&self) -> &str {
+        &self.path
+    }
+
+    pub fn kind(&self) -> u8 {
+        self.kind
+    }
+
+    pub fn major(&self) -> u64 {
+        self.major
+    }
+
+    pub fn minor(&self) -> u64 {
+        self.minor
+    }
+
+    pub fn cgroup_permissions(&self) -> Option<&str> {
+        self.cgroup_permissions.as_ref().map(AsRef::as_ref)
+    }
+
+    pub fn mode(&self) -> u32 {
+        self.mode
+    }
+
+    pub fn uid(&self) -> u32 {
+        self.uid
+    }
+
+    pub fn gid(&self) -> u32 {
+        self.gid
     }
 }
