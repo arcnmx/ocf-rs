@@ -1,6 +1,6 @@
 [package]
 name = "ocf"
-version = "0.0.1"
+version = "0.2.0-alpha.1"
 authors = ["arcnmx"]
 build = "build.rs"
 
