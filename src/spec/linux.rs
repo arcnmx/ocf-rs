@@ -47,6 +47,51 @@ string_enum! { Capability:
     WakeAlarm => "CAP_WAKE_ALARM",
 }
 
+impl Capability {
+    pub fn cap_flag(&self) -> usize {
+        match *self {
+            Capability::AuditControl => 30,
+            Capability::AuditRead => 37,
+            Capability::AuditWrite => 29,
+            Capability::BlockSuspend => 36,
+            Capability::Chown => 0,
+            Capability::DacOverride => 1,
+            Capability::DacReadSearch => 2,
+            Capability::FOwner => 3,
+            Capability::FSetID => 4,
+            Capability::IpcLock => 14,
+            Capability::IpcOwner => 15,
+            Capability::Kill => 5,
+            Capability::Lease => 28,
+            Capability::LinuxImmutable => 9,
+            Capability::MacAdmin => 33,
+            Capability::MacOverride => 32,
+            Capability::Mknod => 27,
+            Capability::NetAdmin => 12,
+            Capability::NetBindService => 10,
+            Capability::NetBroadcast => 11,
+            Capability::NetRaw => 13,
+            Capability::SetGID => 6,
+            Capability::SetTFCap => 31,
+            Capability::SetPCap => 8,
+            Capability::SetUID => 7,
+            Capability::SysAdmin => 21,
+            Capability::SysBoot => 22,
+            Capability::SysChroot => 18,
+            Capability::SysModule => 16,
+            Capability::SysNice => 23,
+            Capability::SysPAcct => 20,
+            Capability::SysPTrace => 19,
+            Capability::SysRawIO => 17,
+            Capability::SysResource => 24,
+            Capability::SysTime => 25,
+            Capability::SysTtyConfig => 26,
+            Capability::Syslog => 34,
+            Capability::WakeAlarm => 35,
+        }
+    }
+}
+
 impl User {
     pub fn uid(&self) -> u32 {
         self.uid
