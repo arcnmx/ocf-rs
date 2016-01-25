@@ -7,3 +7,6 @@ include!("lib.rs");
 
 #[cfg(feature = "syntex")]
 include!(concat!(env!("OUT_DIR"), "/lib.rs"));
+
+#[cfg(not(any(feature = "unstable", feature = "syntex")))]
+error_expected_unstable_or_stable_feature!();
