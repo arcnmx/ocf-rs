@@ -40,7 +40,7 @@ deploy:
 
 before_deploy:
     - cargo doc
-    - cargo package
+    - cargo package --no-verify
 
 after_deploy:
     - cargo pages-publish
