@@ -13,9 +13,9 @@ pub struct RuntimeSpec {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Command {
     pub path: String,
-    #[serde(default, skip_serializing_if_empty)]
+    #[serde(default, skip_serializing_if="Vec::is_empty")]
     pub args: Vec<String>,
-    #[serde(default, skip_serializing_if_empty)]
+    #[serde(default, skip_serializing_if="Vec::is_empty")]
     pub env: Vec<Env>,
 }
 
@@ -24,7 +24,7 @@ pub struct Mount {
     #[serde(rename = "type")]
     pub kind: String,
     pub source: String,
-    #[serde(default, skip_serializing_if_empty)]
+    #[serde(default, skip_serializing_if="Vec::is_empty")]
     pub options: Vec<String>,
 }
 

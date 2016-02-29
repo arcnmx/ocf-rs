@@ -8,7 +8,7 @@ use runtime::RuntimeSpec;
 pub fn load<P: AsRef<Path>>(p: P) -> io::Result<(Spec, RuntimeSpec)> {
     fn err(e: serde_json::Error) -> io::Error {
         match e {
-            serde_json::Error::IoError(e) => e,
+            serde_json::Error::Io(e) => e,
             e => io::Error::new(io::ErrorKind::InvalidData, e),
         }
     }

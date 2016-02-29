@@ -35,12 +35,12 @@ impl de::Deserialize for Env {
                         value: value.to_owned(),
                     })
                 } else {
-                    Err(E::syntax("missing '=' in environment variable"))
+                    Err(E::invalid_value("missing '=' in environment variable"))
                 }
             }
         }
 
-        d.visit(V)
+        d.deserialize(V)
     }
 }
 
@@ -61,7 +61,7 @@ impl de::Deserialize for Process {
 
         ProcessDeserialize::deserialize(d).and_then(|process| {
             let (cmd, args) = try!(process.args.split_first()
-                .ok_or_else(|| <D::Error as de::Error>::syntax("args must contain at least one value"))
+                .ok_or_else(|| <D::Error as de::Error>::invalid_value("args must contain at least one value"))
             );
             Ok(Process {
                 terminal: process.terminal,
@@ -79,14 +79,14 @@ impl ser::Serialize for Process {
     fn serialize<S: ser::Serializer>(&self, s: &mut S) -> Result<(), S::Error> {
         #[derive(Serialize)]
         struct ProcessSerialize<'a> {
-            #[serde(skip_serializing_if_none)]
+            #[serde(skip_serializing_if="Option::is_none")]
             terminal: Option<bool>,
-            #[serde(skip_serializing_if_none)]
+            #[serde(skip_serializing_if="Option::is_none")]
             user: &'a Option<linux::User>,
             args: Vec<&'a str>,
-            #[serde(skip_serializing_if_empty)]
+            #[serde(skip_serializing_if="Vec::is_empty")]
             env: &'a Vec<Env>,
-            #[serde(skip_serializing_if_none)]
+            #[serde(skip_serializing_if="Option::is_none")]
             cwd: &'a Option<String>,
         }
 
@@ -140,7 +140,7 @@ impl de::Deserialize for Spec {
                 version: try!(if version_req().matches(&spec.version.0) {
                     Ok(spec.version.0)
                 } else {
-                    Err(<D::Error as de::Error>::syntax("incompatible version"))
+                    Err(<D::Error as de::Error>::invalid_value("incompatible version"))
                 }),
                 platform: try!(match &os[..] {
                     "linux" => spec.linux.map(|linux|
@@ -149,8 +149,8 @@ impl de::Deserialize for Spec {
                             capabilities: linux.capabilities,
                         })
                     ),
-                    _ => Some(Err(<D::Error as de::Error>::syntax("unrecognized operating system"))),
-                }.unwrap_or_else(|| Err(<D::Error as de::Error>::syntax("missing platform configuration")))),
+                    _ => Some(Err(<D::Error as de::Error>::invalid_value("unrecognized operating system"))),
+                }.unwrap_or_else(|| Err(<D::Error as de::Error>::invalid_value("missing platform configuration")))),
                 process: spec.process,
                 root: spec.root,
                 hostname: spec.hostname,
@@ -170,7 +170,7 @@ impl ser::Serialize for Spec {
 
         #[derive(Serialize)]
         struct LinuxSerialize<'a> {
-            #[serde(skip_serializing_if_empty)]
+            #[serde(skip_serializing_if="Vec::is_empty")]
             capabilities: &'a Vec<linux::Capability>,
         }
 
@@ -180,11 +180,11 @@ impl ser::Serialize for Spec {
             platform: PlatformSerialize<'a>,
             process: &'a Process,
             root: &'a Root,
-            #[serde(skip_serializing_if_none)]
+            #[serde(skip_serializing_if="Option::is_none")]
             hostname: &'a Option<String>,
-            #[serde(skip_serializing_if_empty)]
+            #[serde(skip_serializing_if="Vec::is_empty")]
             mounts: &'a Vec<MountPoint>,
-            #[serde(skip_serializing_if_none)]
+            #[serde(skip_serializing_if="Option::is_none")]
             linux: Option<LinuxSerialize<'a>>,
         }
 
@@ -225,11 +225,11 @@ impl de::Deserialize for VersionDeserialize {
             type Value = VersionDeserialize;
 
             fn visit_str<E: de::Error>(&mut self, value: &str) -> Result<Self::Value, E> {
-                Version::parse(value).map(VersionDeserialize).map_err(|e| E::syntax(e.description()))
+                Version::parse(value).map(VersionDeserialize).map_err(|e| E::invalid_value(e.description()))
             }
         }
 
-        d.visit(V)
+        d.deserialize(V)
     }
 }
 
@@ -237,6 +237,6 @@ struct VersionSerialize<'a>(&'a Version);
 
 impl<'a> ser::Serialize for VersionSerialize<'a> {
     fn serialize<S: ser::Serializer>(&self, s: &mut S) -> Result<(), S::Error> {
-        s.visit_str(&self.0.to_string())
+        s.serialize_str(&self.0.to_string())
     }
 }

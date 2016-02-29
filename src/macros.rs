@@ -31,11 +31,11 @@ macro_rules! string_enum {
                     type Value = $ty;
 
                     fn visit_str<E: ::serde::de::Error>(&mut self, value: &str) -> Result<Self::Value, E> {
-                        $ty::try_from(value).ok_or_else(|| E::syntax("unknown value"))
+                        $ty::try_from(value).ok_or_else(|| E::invalid_value("unknown value"))
                     }
                 }
 
-                d.visit(V)
+                d.deserialize(V)
             }
         }
 

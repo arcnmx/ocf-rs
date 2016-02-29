@@ -2,7 +2,7 @@
 pub struct User {
     pub uid: u32,
     pub gid: u32,
-    #[serde(default, skip_serializing_if_empty, rename = "additionalGids")]
+    #[serde(default, skip_serializing_if="Vec::is_empty", rename = "additionalGids")]
     pub additional_gids: Vec<u32>,
 }
 

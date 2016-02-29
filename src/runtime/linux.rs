@@ -12,21 +12,21 @@ pub struct IdMap {
 
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Runtime {
-    #[serde(default, skip_serializing_if_empty)]
+    #[serde(default, skip_serializing_if="Vec::is_empty")]
     pub namespaces: Vec<Namespace>,
-    #[serde(rename = "uidMappings", default, skip_serializing_if_empty)]
+    #[serde(rename = "uidMappings", default, skip_serializing_if="Vec::is_empty")]
     pub uid_mappings: Vec<IdMap>,
-    #[serde(rename = "gidMappings", default, skip_serializing_if_empty)]
+    #[serde(rename = "gidMappings", default, skip_serializing_if="Vec::is_empty")]
     pub gid_mappings: Vec<IdMap>,
     #[serde(rename = "rootfsPropagation", default)]
     pub rootfs_propagation: Option<MountPropagation>,
-    #[serde(default, skip_serializing_if_empty)]
+    #[serde(default, skip_serializing_if="Vec::is_empty")]
     pub devices: Vec<Device>,
 
     // Unsupported stubs
     #[serde(default, skip_serializing)]
     pub rlimits: Vec<Value>,
-    #[serde(default, skip_serializing_if_empty)]
+    #[serde(default, skip_serializing_if="BTreeMap::is_empty")]
     pub sysctl: BTreeMap<String, String>,
     #[serde(skip_serializing)]
     pub resources: Value,
@@ -44,7 +44,7 @@ pub struct Runtime {
 pub struct Namespace {
     #[serde(rename = "type")]
     pub kind: NamespaceKind,
-    #[serde(default, skip_serializing_if_none)]
+    #[serde(default, skip_serializing_if="Option::is_none")]
     pub path: Option<String>,
 }
 
@@ -55,7 +55,7 @@ pub struct Device {
     pub kind: u8,
     pub major: u64,
     pub minor: u64,
-    #[serde(rename = "permissions", default, skip_serializing_if_none)]
+    #[serde(rename = "permissions", default, skip_serializing_if="Option::is_none")]
     pub cgroup_permissions: Option<String>,
     #[serde(rename = "fileMode")]
     pub mode: u32,

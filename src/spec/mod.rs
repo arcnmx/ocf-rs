@@ -16,7 +16,7 @@ pub struct Spec {
 #[derive(Clone, Debug, Serialize, Deserialize)]
 pub struct Root {
     pub path: String,
-    #[serde(default, skip_serializing_if_none)]
+    #[serde(default, skip_serializing_if="Option::is_none")]
     pub readonly: Option<bool>,
 }
 
