@@ -5,8 +5,8 @@
 #[cfg(feature = "unstable")]
 include!("lib.rs");
 
-#[cfg(feature = "syntex")]
+#[cfg(feature = "serde_codegen")]
 include!(concat!(env!("OUT_DIR"), "/lib.rs"));
 
-#[cfg(not(any(feature = "unstable", feature = "syntex")))]
+#[cfg(not(any(feature = "unstable", feature = "serde_codegen")))]
 error_expected_unstable_or_stable_feature!();
