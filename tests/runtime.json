@@ -3,6 +3,7 @@
 		"cgroup": {
 			"type": "cgroup",
 			"source": "cgroup",
+			"destination": "/sys/fs/cgroup",
 			"options": [
 				"nosuid",
 				"noexec",
@@ -14,6 +15,7 @@
 		"dev": {
 			"type": "tmpfs",
 			"source": "tmpfs",
+			"destination": "/tmp",
 			"options": [
 				"nosuid",
 				"strictatime",
@@ -24,6 +26,7 @@
 		"devpts": {
 			"type": "devpts",
 			"source": "devpts",
+			"destination": "/dev/pts",
 			"options": [
 				"nosuid",
 				"noexec",
@@ -36,6 +39,7 @@
 		"mqueue": {
 			"type": "mqueue",
 			"source": "mqueue",
+			"destination": "/var/mqueue",
 			"options": [
 				"nosuid",
 				"noexec",
@@ -45,11 +49,13 @@
 		"proc": {
 			"type": "proc",
 			"source": "proc",
+			"destination": "/proc",
 			"options": null
 		},
 		"shm": {
 			"type": "tmpfs",
 			"source": "shm",
+			"destination": "/dev/shm",
 			"options": [
 				"nosuid",
 				"noexec",
@@ -61,6 +67,7 @@
 		"sysfs": {
 			"type": "sysfs",
 			"source": "sysfs",
+			"destination": "/sys",
 			"options": [
 				"nosuid",
 				"noexec",

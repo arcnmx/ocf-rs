@@ -24,6 +24,7 @@ pub struct Mount {
     #[serde(rename = "type")]
     pub kind: String,
     pub source: String,
+    pub destination: String,
     #[serde(default, skip_serializing_if="Vec::is_empty")]
     pub options: Vec<String>,
 }
