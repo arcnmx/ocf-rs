@@ -12,15 +12,8 @@ cache:
 matrix:
     fast_finish: true
     allow_failures:
-        - env:
-              - CARGO_FEATURES=unstable
-    include:
         - rust: nightly
-          env:
-              - CARGO_FEATURES=unstable
 env:
-    matrix:
-        - CARGO_FEATURES=stable
     global:
         - secure: "hL3qGUhLR05+T7ICiyPHM78xMZmNpzUbQ17Ttb87jlec0FAbeWkJE0Ijyl+iUwYHr/z7JoTfYgU1Hm0Hom5XJ0mhqaZapDstYLiJmfbqsF8oKe7Zy6+6nHgig8caTIkLPDLSpWVGm3jhjMOhxqTwuXY1XRWxSkpqvtFJeI39Xcdz5pYKLaWfDJ98eFVnzo3F7YmcLq83zGrQA4tyoDWICTmReO02oVWopOrBVjhQodo83dQZgCTIjSQNVDfVMg1DAtCu10ByNQVB+iR9hmFPBu6X44sU2U6MRkEzmOL2pdWU+S+lKirEbgeGIofiJ/WQBRYpPsJZznK4URWExQa11O2asu6GjPIFxLJCdRuZd6k9tRQTUFbmmDUJfI2YPR8LHMvtQDW9d2Tjofrb0i1eVJT3GNJlSBFKh1nAxO8R+70CwqC+0T8mTwB+U4eM5lg8XCJ1jvTi2wBaDmU/CPBeYWaE5w9OrvIXhU00epo6jVPBUJ5ngM8a0nVFBKCBIiRsS9/zuItl86shRWsi8K8AV8TRzne6xuU4LKCGPg1wVoaFlNuxzxlOv+/u80WyURPiOk1RJe9Xv3GlO2E6WXJq6lJw+IgDdjISGcIxLXIhVR2XaSZQQebIeHz5YPSnqU9+sLDII61QoNSIB/0IcDKuruZKZJquSLmawN2NlyUTe0U="
         - secure: "LZcbR9oNAqqF/Q1O+z00drKmj2qRRe2IaJWlfGt6WCVy8dM0BlrAF6MGP65KoOtDwNQ+0Q8tF75KXwLDKdgK31Wj+2HuLaolcy65t2uhqErABfdqTG633sK1ePF06/a9B29GOG5EXU4ntugPKFMmO3gx04BnZh4mz4eooVpsnPRXDJvVximmfucYYEzwiC4wk1UxlkZfK2sMtAOpeLE76/fXu4OxKE9syHl5kp1M5AAdpB+UgPzC1FYQhBg7K0OQfHRKwpgJa2W6Km9FJKfxFOM41YH35hodYKH+la+C/ehEj0g3gwKH0s+20zvH579VqjYs1hC/K5fk6w3wWlVnySAJ0q8SWrMVU3WFH6/UKtYfehPYo+FglXP+LWZStcWJmu2Lh6pJZ1Bb4QvMzsLO/xGbD7huwLE0HHmhqgVBhZdAeGRdZ/GApkFGy6d4s75qRc7YmCVdB1ejGrOMiOTgf8dJA/2a1U0PmBzJ5E3j6w0g0TzcApt9H2AFZmWv8hwr8WeXgwmxgSti54j7c/llEUWXI2T+GCpVx9ecybQJW7/JNRLL2pqvSov8R57prcXGkXtzgWFA0qHTESGqDn0V7kbUXU++yzxjNEPUGrK03qs4yRYbjLzivaxmHS+5ivK8909e+n1gTewHBq69A+Knq+7ZNhLZo4VaKbiR+Gwqryg="

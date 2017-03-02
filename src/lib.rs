@@ -1,3 +1,7 @@
+#![doc(html_root_url="https://arcnmx.github.io/ocf-rs")]
+
+#[macro_use]
+extern crate serde_derive;
 extern crate serde;
 extern crate serde_value;
 extern crate serde_json;
