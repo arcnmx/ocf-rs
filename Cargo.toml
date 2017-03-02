@@ -2,7 +2,6 @@
 name = "ocf"
 version = "0.2.0-alpha.6"
 authors = ["arcnmx"]
-build = "build.rs"
 
 description = "Open Container Specification"
 documentation = "http://arcnmx.github.io/ocf-rs/ocf/"
@@ -11,19 +10,9 @@ readme = "README.md"
 keywords = ["oci", "open", "container", "docker", "runc"]
 license = "MIT"
 
-[lib]
-path = "src/mod.rs"
-
 [dependencies]
 serde = "0.9"
-serde_derive = { version = "0.9", optional = true }
+serde_derive = "0.9"
 serde_json = "0.9"
 serde-value = "0.4"
 semver = "0.6"
-
-[build-dependencies]
-serde_codegen = { version = "0.9", optional = true }
-
-[features]
-stable = ["serde_codegen"]
-unstable = ["serde_derive"]
