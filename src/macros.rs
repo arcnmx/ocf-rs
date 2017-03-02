@@ -24,14 +24,18 @@ macro_rules! string_enum {
         }
 
         impl ::serde::de::Deserialize for $ty {
-            fn deserialize<D: ::serde::de::Deserializer>(d: &mut D) -> Result<Self, D::Error> {
+            fn deserialize<D: ::serde::de::Deserializer>(d: D) -> Result<Self, D::Error> {
                 struct V;
 
                 impl ::serde::de::Visitor for V {
                     type Value = $ty;
 
-                    fn visit_str<E: ::serde::de::Error>(&mut self, value: &str) -> Result<Self::Value, E> {
-                        $ty::try_from(value).ok_or_else(|| E::invalid_value("unknown value"))
+                    fn visit_str<E: ::serde::de::Error>(self, value: &str) -> Result<Self::Value, E> {
+                        $ty::try_from(value).ok_or_else(|| E::invalid_value(::serde::de::Unexpected::Str(value), &"unknown value"))
+                    }
+
+                    fn expecting(&self, formatter: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
+                        write!(formatter, "a variant string")
                     }
                 }
 
@@ -40,7 +44,7 @@ macro_rules! string_enum {
         }
 
         impl ::serde::ser::Serialize for $ty {
-            fn serialize<S: ::serde::ser::Serializer>(&self, s: &mut S) -> Result<(), S::Error> {
+            fn serialize<S: ::serde::ser::Serializer>(&self, s: S) -> Result<S::Ok, S::Error> {
                 ::serde::ser::Serialize::serialize(Into::<&'static str>::into(self), s)
             }
         }

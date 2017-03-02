@@ -21,13 +21,13 @@ impl RuntimeSpec {
 }
 
 impl de::Deserialize for Env {
-    fn deserialize<D: de::Deserializer>(d: &mut D) -> Result<Self, D::Error> {
+    fn deserialize<D: de::Deserializer>(d: D) -> Result<Self, D::Error> {
         struct V;
 
         impl de::Visitor for V {
             type Value = Env;
 
-            fn visit_str<E: de::Error>(&mut self, value: &str) -> Result<Self::Value, E> {
+            fn visit_str<E: de::Error>(self, value: &str) -> Result<Self::Value, E> {
                 let mut split = value.splitn(2, '=');
                 if let Some((key, value)) = split.next().and_then(|k| split.next().map(|v| (k, v))) {
                     Ok(Env {
@@ -35,8 +35,12 @@ impl de::Deserialize for Env {
                         value: value.to_owned(),
                     })
                 } else {
-                    Err(E::invalid_value("missing '=' in environment variable"))
+                    Err(E::invalid_length(1, &"missing '=' in environment variable"))
                 }
+            }
+
+            fn expecting(&self, formatter: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
+                write!(formatter, "an environment flag in 'key=value' format")
             }
         }
 
@@ -45,7 +49,7 @@ impl de::Deserialize for Env {
 }
 
 impl de::Deserialize for Process {
-    fn deserialize<D: de::Deserializer>(d: &mut D) -> Result<Self, D::Error> {
+    fn deserialize<D: de::Deserializer>(d: D) -> Result<Self, D::Error> {
         #[derive(Deserialize)]
         struct ProcessDeserialize {
             #[serde(default)]
@@ -61,7 +65,7 @@ impl de::Deserialize for Process {
 
         ProcessDeserialize::deserialize(d).and_then(|process| {
             let (cmd, args) = try!(process.args.split_first()
-                .ok_or_else(|| <D::Error as de::Error>::invalid_value("args must contain at least one value"))
+                .ok_or_else(|| <D::Error as de::Error>::invalid_length(process.args.len(), &"args must contain at least one value"))
             );
             Ok(Process {
                 terminal: process.terminal,
@@ -76,7 +80,7 @@ impl de::Deserialize for Process {
 }
 
 impl ser::Serialize for Process {
-    fn serialize<S: ser::Serializer>(&self, s: &mut S) -> Result<(), S::Error> {
+    fn serialize<S: ser::Serializer>(&self, s: S) -> Result<S::Ok, S::Error> {
         #[derive(Serialize)]
         struct ProcessSerialize<'a> {
             #[serde(skip_serializing_if="Option::is_none")]
@@ -101,13 +105,13 @@ impl ser::Serialize for Process {
 }
 
 impl ser::Serialize for Env {
-    fn serialize<S: ser::Serializer>(&self, s: &mut S) -> Result<(), S::Error> {
+    fn serialize<S: ser::Serializer>(&self, s: S) -> Result<S::Ok, S::Error> {
         format!("{}={}", self.key, self.value).serialize(s)
     }
 }
 
 impl de::Deserialize for Spec {
-    fn deserialize<D: de::Deserializer>(d: &mut D) -> Result<Self, D::Error> {
+    fn deserialize<D: de::Deserializer>(d: D) -> Result<Self, D::Error> {
         #[derive(Deserialize)]
         struct PlatformDeserialize {
             os: String,
@@ -140,7 +144,7 @@ impl de::Deserialize for Spec {
                 version: try!(if version_req().matches(&spec.version.0) {
                     Ok(spec.version.0)
                 } else {
-                    Err(<D::Error as de::Error>::invalid_value("incompatible version"))
+                    Err(<D::Error as de::Error>::custom("incompatible version"))
                 }),
                 platform: try!(match &os[..] {
                     "linux" => spec.linux.map(|linux|
@@ -149,8 +153,8 @@ impl de::Deserialize for Spec {
                             capabilities: linux.capabilities,
                         })
                     ),
-                    _ => Some(Err(<D::Error as de::Error>::invalid_value("unrecognized operating system"))),
-                }.unwrap_or_else(|| Err(<D::Error as de::Error>::invalid_value("missing platform configuration")))),
+                    _ => Some(Err(<D::Error as de::Error>::custom("unrecognized operating system"))),
+                }.unwrap_or_else(|| Err(<D::Error as de::Error>::custom("missing platform configuration")))),
                 process: spec.process,
                 root: spec.root,
                 hostname: spec.hostname,
@@ -161,7 +165,7 @@ impl de::Deserialize for Spec {
 }
 
 impl ser::Serialize for Spec {
-    fn serialize<S: ser::Serializer>(&self, s: &mut S) -> Result<(), S::Error> {
+    fn serialize<S: ser::Serializer>(&self, s: S) -> Result<S::Ok, S::Error> {
         #[derive(Serialize)]
         struct PlatformSerialize<'a> {
             os: &'a str,
@@ -216,7 +220,7 @@ impl ser::Serialize for Spec {
 struct VersionDeserialize(Version);
 
 impl de::Deserialize for VersionDeserialize {
-    fn deserialize<D: de::Deserializer>(d: &mut D) -> Result<Self, D::Error> {
+    fn deserialize<D: de::Deserializer>(d: D) -> Result<Self, D::Error> {
         use std::error::Error;
 
         struct V;
@@ -224,8 +228,12 @@ impl de::Deserialize for VersionDeserialize {
         impl de::Visitor for V {
             type Value = VersionDeserialize;
 
-            fn visit_str<E: de::Error>(&mut self, value: &str) -> Result<Self::Value, E> {
-                Version::parse(value).map(VersionDeserialize).map_err(|e| E::invalid_value(e.description()))
+            fn visit_str<E: de::Error>(self, value: &str) -> Result<Self::Value, E> {
+                Version::parse(value).map(VersionDeserialize).map_err(|e| E::invalid_value(de::Unexpected::Str(e.description()), &"a version string"))
+            }
+
+            fn expecting(&self, formatter: &mut ::std::fmt::Formatter) -> ::std::fmt::Result {
+                write!(formatter, "a version string")
             }
         }
 
@@ -236,7 +244,7 @@ impl de::Deserialize for VersionDeserialize {
 struct VersionSerialize<'a>(&'a Version);
 
 impl<'a> ser::Serialize for VersionSerialize<'a> {
-    fn serialize<S: ser::Serializer>(&self, s: &mut S) -> Result<(), S::Error> {
+    fn serialize<S: ser::Serializer>(&self, s: S) -> Result<S::Ok, S::Error> {
         s.serialize_str(&self.0.to_string())
     }
 }

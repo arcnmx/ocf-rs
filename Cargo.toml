@@ -15,15 +15,15 @@ license = "MIT"
 path = "src/mod.rs"
 
 [dependencies]
-serde = "^0.7.0"
-serde_macros = { version = "^0.7.0", optional = true }
-serde_json = "^0.7.0"
-serde-value = "^0.1.0"
-semver = "^0.2.1"
+serde = "0.9"
+serde_derive = { version = "0.9", optional = true }
+serde_json = "0.9"
+serde-value = "0.4"
+semver = "0.6"
 
 [build-dependencies]
-serde_codegen = { version = "^0.7.9", optional = true }
+serde_codegen = { version = "0.9", optional = true }
 
 [features]
 stable = ["serde_codegen"]
-unstable = ["serde_macros"]
+unstable = ["serde_derive"]
